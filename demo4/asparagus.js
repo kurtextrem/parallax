@@ -1,26 +1,33 @@
 /**
- * @license Asparagus v1.0
- * (c) 2013 Form5 http://form5.is
+ * @license Asparagus v2
+ * (c) 2016 Form5 http://form5.is + Jacob "kurtextrem" Groß
  * License: MIT
  */
-(function() {
+(function(window) {
+  'use strict'
+
   var lastScrollY = 0,
-      ticking = false,
+      elemY = 0,
+      tickId = 0,
       bgElm = document.getElementById('hero-bg'),
-      speedDivider = 2;
+      speedDivider = 2.25;
 
   // Update background position
   var updatePosition = function() {
+    lastScrollY = window.pageYOffset; // causes reflow
+    if (!elemY) elemY = bgElm.clientTop + bgElm.clientHeight; // causes reflow only once
+
     var translateValue = lastScrollY / speedDivider;
 
     // We don't want parallax to happen if scrollpos is below 0
     if (translateValue < 0)
       translateValue = 0;
 
-    translateY(bgElm, translateValue);
+    if (lastScrollY <= elemY)
+      translateY(bgElm, translateValue);
 
     // Stop ticking
-    ticking = false;
+    tickId = 0;
   };
 
   // Translates an element on the Y axis using translate3d to ensure
@@ -37,15 +44,14 @@
   // This will limit the calculation of the background position to
   // 60fps as well as blocking it from running multiple times at once
   var requestTick = function() {
-    if (!ticking) {
-      window.requestAnimationFrame(updatePosition);
-      ticking = true;
-    }
+    if (tickId)
+      window.cancelAnimationFrame(tickId);
+    else
+      tickId = window.requestAnimationFrame(updatePosition);
   };
 
   // Update scroll value and request tick
   var doScroll = function() {
-    lastScrollY = window.pageYOffset;
     requestTick();
   };
 
@@ -56,15 +62,15 @@
       if (loaded) return;
       loaded = 1;
 
-      rafPolyfill();
-      window.onscroll = doScroll;
+      if (!window.requestAnimationFrame && !window.cancelAnimationFrame) rafPolyfill();
+      window.addEventListener('scroll', doScroll, false);
     };
 
-    if ( document.readyState === 'complete' ) {
-      setTimeout( bootstrap );
+    if (document.readyState === 'complete') {
+      setTimeout(bootstrap);
     } else {
-      document.addEventListener( 'DOMContentLoaded', bootstrap, false );
-      window.addEventListener( 'load', bootstrap, false );
+      document.addEventListener('DOMContentLoaded', bootstrap, false);
+      window.addEventListener('load', bootstrap, false);
     }
   })();
 
@@ -98,4 +104,4 @@
     }
   };
 
-}).call(this);
+}(window));
