@@ -221,16 +221,21 @@ var translateY3d = function(elm, value) {
 
 ### Technique 4: "The Web has moved forward"
 
-Since the last version, the web changed a lot. A new CSS property has been given birth, its name is `contain`. It basically tells the browser do not want to affect other elements, when we modify the hero.
+Since the last version, the web changed a lot. A new CSS property has been given birth, its name is `contain`. It basically tells the browser we do not want to affect other elements, when we modify the hero.
 
 Also, when inspecting the timeline, we could notice all other techniques move the element even if it's outside the viewport. Does it make sense?
+
 ![Chrome Dev Timeline](http://image.prntscr.com/image/e3fcb9af4adb41528d19800a70635697.png)
+
 We can clearly see, that the browser has to calculate (and paint, but the browser must always paint and composite on scoll) - unnecessarily!
 
-To mitigate this, we add a new variable to `updatePosition`. The drawback: `clientTop` and `clientHeight` cause [reflows](https://gist.github.com/paulirish/5d52fb081b3570c81e3a). But we set the height only once and `pageYOffset` sadly causes a reflow every frame anyway.
+
+To mitigate this, we add a new variable to `updatePosition`. The drawback: `clientTop` and `clientHeight` cause [reflows](https://gist.github.com/paulirish/5d52fb081b3570c81e3a). 
+But we set the height only once and `pageYOffset` sadly causes a reflow every frame anyway.
 ```javascript
-    if (!elemY) elemY = bgElm.clientTop + bgElm.clientHeight; // causes reflow only once
+if (!elemY) elemY = bgElm.clientTop + bgElm.clientHeight; // causes reflow only once
 ```
+
 
 Last but not least, `background-size: cover` is a culprit. We want it for aesthetic purposes, but resizing huge images is not a cheap task. [This](https://www.fourkitchens.com/blog/article/fix-scrolling-performance-css-will-change-property) post explains how to fix it. TL;DR: We move the hero image into a pseudo element and promote the pseudo element to its own layer.
 
