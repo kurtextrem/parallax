@@ -232,7 +232,10 @@ To mitigate this, we add a new variable to `updatePosition`. The drawback: `clie
     if (!elemY) elemY = bgElm.clientTop + bgElm.clientHeight; // causes reflow only once
 ```
 
-Last but not least, `background-size: cover` is a culprit. We want it for aesthetic purposes, but resizing huge images is not a cheap task. [This](https://www.fourkitchens.com/blog/article/fix-scrolling-performance-css-will-change-property) post explains how to fix it. TL;DR: We move the hero image into a pseudo element and promote the pseudo element to its own layer.
+In addition, `background-size: cover` is a culprit. We want it for aesthetic purposes, but resizing huge images is not a cheap task. [This](https://www.fourkitchens.com/blog/article/fix-scrolling-performance-css-will-change-property) post explains how to fix it. TL;DR: We promote the element, so it gets its own GPU accelerated layer. At the same time, we tell the browser that we will transform it, so the engine is prepared.
+
+Last but not least, we take a look at z-index. We don't want to accidentally create new layers, as this makes text blurry and higher VRAM usage. See [here](http://output.jsbin.com/efirip/5/quiet).
+This means we apply `z-index: 1` to the hero element and `z-index: 2` to the content above it. If you set `z-index` elsewhere on your page, adjust the `z-index` of the parallax element to be higher than your always visible body content.
 
 #### The Results: We Have a Winner!
 
