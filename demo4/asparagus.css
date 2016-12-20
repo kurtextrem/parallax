@@ -15,8 +15,8 @@ body {
 #hero {
   position: relative;
   height: 750px;
-  overflow: hidden;
 
+  overflow: hidden;
   contain: strict;
 }
 

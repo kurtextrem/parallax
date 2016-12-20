@@ -3,20 +3,17 @@
  * (c) 2016 Form5 http://form5.is + Jacob "kurtextrem" Groß
  * License: MIT
  */
-(function(window) {
+ (function(window) {
   'use strict'
 
   var lastScrollY = 0,
-      elemY = 0,
-      tickId = 0,
-      bgElm = document.getElementById('hero-bg'),
-      speedDivider = 2.25;
+        elemY = 0,
+        tickId = 0,
+        bgElm = document.getElementById('hero-bg'),
+        speedDivider = 2.1;
 
   // Update background position
   var updatePosition = function() {
-    lastScrollY = window.pageYOffset; // causes reflow
-    if (!elemY) elemY = bgElm.clientTop + bgElm.clientHeight; // causes reflow only once
-
     var translateValue = lastScrollY / speedDivider;
 
     // We don't want parallax to happen if scrollpos is below 0
@@ -33,24 +30,23 @@
   // Translates an element on the Y axis using translate3d to ensure
   // that the rendering is done by the GPU
   var translateY = function(elm, value) {
-    var translate = 'translate3d(0px,' + value + 'px, 0px)';
+    var translate = 'translate3d(0,' + value + 'px, 0)';
+    elm.style.transform = translate;
     elm.style['-webkit-transform'] = translate;
     elm.style['-moz-transform'] = translate;
     elm.style['-ms-transform'] = translate;
     elm.style['-o-transform'] = translate;
-    elm.style.transform = translate;
   };
 
   // This will limit the calculation of the background position to
   // 60fps as well as blocking it from running multiple times at once
   var requestTick = function() {
-    if (tickId)
-      window.cancelAnimationFrame(tickId);
-    else
-      tickId = window.requestAnimationFrame(updatePosition);
+    lastScrollY = window.pageYOffset; // causes reflow
+    if (!elemY) elemY = bgElm.clientTop + bgElm.clientHeight; // causes reflow only once
+    tickId = window.requestAnimationFrame(updatePosition);
   };
 
-  // Update scroll value and request tick
+  // Request tick
   var doScroll = function() {
     requestTick();
   };
@@ -76,32 +72,27 @@
 
   // RequestAnimationFrame polyfill for older browsers
   var rafPolyfill = function() {
-    var lastTime, vendors, x;
-    lastTime = 0;
-    vendors = ["webkit", "moz"];
-    x = 0;
-    while (x < vendors.length && !window.requestAnimationFrame) {
-      window.requestAnimationFrame = window[vendors[x] + "RequestAnimationFrame"];
-      window.cancelAnimationFrame = window[vendors[x] + "CancelAnimationFrame"] || window[vendors[x] + "CancelRequestAnimationFrame"];
-      ++x;
+    var lastTime = 0;
+    var vendors = ['ms', 'moz', 'webkit', 'o'];
+    for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
+      window.requestAnimationFrame = window[vendors[x]+'RequestAnimationFrame'];
+      window.cancelAnimationFrame = window[vendors[x]+'CancelAnimationFrame'] || window[vendors[x]+'CancelRequestAnimationFrame'];
     }
+
     if (!window.requestAnimationFrame) {
       window.requestAnimationFrame = function(callback, element) {
-        var currTime, id, timeToCall;
-        currTime = new Date().getTime();
-        timeToCall = Math.max(0, 16 - (currTime - lastTime));
-        id = window.setTimeout(function() {
-          callback(currTime + timeToCall);
-        }, timeToCall);
+        var currTime = new Date().getTime();
+        var timeToCall = Math.max(0, 16 - (currTime - lastTime));
+        var id = window.setTimeout(function() { callback(currTime + timeToCall); }, timeToCall);
         lastTime = currTime + timeToCall;
         return id;
       };
     }
+
     if (!window.cancelAnimationFrame) {
       window.cancelAnimationFrame = function(id) {
         clearTimeout(id);
       };
     }
   };
-
 }(window));
