@@ -2,97 +2,116 @@
  * @license Asparagus v2
  * (c) 2016 Form5 http://form5.is + Jacob "kurtextrem" Groß
  * License: MIT
+ *
+ * Please include a polyfill for requestAnimationFrame if you support older browsers.
  */
- (function(window) {
-  'use strict'
+(function (window) {
+	'use strict'
 
-  var lastScrollY = 0,
-        elemY = 0,
-        tickId = 0,
-        bgElm = document.getElementById('hero-bg'),
-        speedDivider = 2.1;
+	function Plugin(settings, speedDivider) {
+		var el = typeof settings === 'string' ? settings : 'hero-bg',
+				speed = speedDivider ? +speedDivider : 2.1
 
-  // Update background position
-  var updatePosition = function() {
-    var translateValue = lastScrollY / speedDivider;
+ 		if (~el.indexOf('.') || ~el.indexOf('#')) return console.error('Asparagus needs an ID or single element as bgElem.')
 
-    // We don't want parallax to happen if scrollpos is below 0
-    if (translateValue < 0)
-      translateValue = 0;
+ 		var options = {
+			bgElem: (settings && settings.bgElem) || document.getElementById(el), // if first arg is a string, we take it as elem
+			speedDivider: (settings && settings.speedDivider) || speed,
 
-    if (lastScrollY <= elemY)
-      translateY(bgElm, translateValue);
+			_elemY: 0
+		}
 
-    // Stop ticking
-    tickId = 0;
-  };
+		/** Prevents creation of a new bound function every tick. */
+		function _updatePosition() {
+			updatePosition(options)
+		}
 
-  // Translates an element on the Y axis using translate3d to ensure
-  // that the rendering is done by the GPU
-  var translateY = function(elm, value) {
-    var translate = 'translate3d(0,' + value + 'px, 0)';
-    elm.style.transform = translate;
-    elm.style['-webkit-transform'] = translate;
-    elm.style['-moz-transform'] = translate;
-    elm.style['-ms-transform'] = translate;
-    elm.style['-o-transform'] = translate;
-  };
+		/** Add this instance to the listeners */
+		listeners.push(function _tick() {
+			tick(options, _updatePosition)
+		})
+	}
 
-  // This will limit the calculation of the background position to
-  // 60fps as well as blocking it from running multiple times at once
-  var requestTick = function() {
-    lastScrollY = window.pageYOffset; // causes reflow
-    if (!elemY) elemY = bgElm.clientTop + bgElm.clientHeight; // causes reflow only once
-    tickId = window.requestAnimationFrame(updatePosition);
-  };
+	/**
+	 * Limit the calculation of the background position to 60fps as well as blocking it from running multiple times at once.
+	 *
+	 * @param
+	 * @param
+	 */
+	function tick(options, cb) {
+		if (!options._elemY) options._elemY = options.bgElem.clientTop + options.bgElem.clientHeight // causes reflow only once
 
-  // Request tick
-  var doScroll = function() {
-    requestTick();
-  };
+		tickId = window.requestAnimationFrame(cb)
+	}
 
-  // Initialize on domready
-  (function() {
-    var loaded = 0;
-    var bootstrap = function() {
-      if (loaded) return;
-      loaded = 1;
+	/**
+	 * Updates the background position.
+	 */
+	function updatePosition(options) {
+		var translateValue = lastScrollY / options.speedDivider;
 
-      if (!window.requestAnimationFrame && !window.cancelAnimationFrame) rafPolyfill();
-      window.addEventListener('scroll', doScroll, false);
-    };
+		// We don't want parallax to happen if scrollpos is below 0
+		if (translateValue < 0)
+			translateValue = 0;
 
-    if (document.readyState === 'complete') {
-      setTimeout(bootstrap);
-    } else {
-      document.addEventListener('DOMContentLoaded', bootstrap, false);
-      window.addEventListener('load', bootstrap, false);
-    }
-  })();
+		if (lastScrollY <= options._elemY)
+			translateY(options.bgElem, translateValue)
 
-  // RequestAnimationFrame polyfill for older browsers
-  var rafPolyfill = function() {
-    var lastTime = 0;
-    var vendors = ['ms', 'moz', 'webkit', 'o'];
-    for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
-      window.requestAnimationFrame = window[vendors[x]+'RequestAnimationFrame'];
-      window.cancelAnimationFrame = window[vendors[x]+'CancelAnimationFrame'] || window[vendors[x]+'CancelRequestAnimationFrame'];
-    }
+		// Stop ticking
+		tickId = 0
+	}
 
-    if (!window.requestAnimationFrame) {
-      window.requestAnimationFrame = function(callback, element) {
-        var currTime = new Date().getTime();
-        var timeToCall = Math.max(0, 16 - (currTime - lastTime));
-        var id = window.setTimeout(function() { callback(currTime + timeToCall); }, timeToCall);
-        lastTime = currTime + timeToCall;
-        return id;
-      };
-    }
+	// Translates an element on the Y axis using translate3d to ensure
+	// that the rendering is done by the GPU
+	function translateY(elem, value) {
+		var translate = 'translate3d(0,' + value + 'px, 0)';
+		elem.style.transform = translate;
+		elem.style['-webkit-transform'] = translate;
+		elem.style['-moz-transform'] = translate;
+		elem.style['-ms-transform'] = translate;
+		elem.style['-o-transform'] = translate;
+	};
 
-    if (!window.cancelAnimationFrame) {
-      window.cancelAnimationFrame = function(id) {
-        clearTimeout(id);
-      };
-    }
-  };
+	/** Holds the listeners. */
+	var listeners = []
+	/** Last window.scrollY */
+	var lastScrollY = 0
+	/** rAF tick id */
+	var tickId = 0
+
+	/**
+	 * Calls all registered listeners.
+	 */
+	function doScroll() {
+		if (tickId) return
+
+		lastScrollY = window.pageYOffset // causes reflow
+		for (var i = 0; i < listeners.length; i++) {
+			listeners[i]()
+		}
+	}
+
+	/**
+	 * Usage: new Parallax(elem, speedDivider) || new Parallax({ bgElem: 'id', speedDivider: 2.1 })
+	 */
+	window.Asparagus = window.Parallax = Plugin
+
+	// Initialize on domready
+	(function () {
+		var loaded = 0
+		function bootstrap () {
+			if (loaded) return
+			loaded = 1
+
+			window.addEventListener('scroll', doScroll, false);
+		};
+
+		if (!window.requestAnimationFrame) return console.error('Please include a polyfill for requestAnimationFrame.')
+
+		if (window.document.readyState === 'complete') {
+			window.requestIdleCallback(bootstrap) || setTimeout(bootstrap, 0)
+		} else {
+			window.addEventListener('load', bootstrap, false)
+		}
+	}());
 }(window));
