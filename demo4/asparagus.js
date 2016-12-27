@@ -12,10 +12,10 @@
 		var el = typeof settings === 'string' ? settings : 'hero-bg',
 				speed = speedDivider ? +speedDivider : 2.1
 
- 		if (~el.indexOf('.') || ~el.indexOf('#')) return console.error('Asparagus needs an ID or single element as bgElem.')
+		if (~el.indexOf('.')) return console.error('Asparagus needs an ID or single element as bgElem.')
 
  		var options = {
-			bgElem: (settings && settings.bgElem) || document.getElementById(el), // if first arg is a string, we take it as elem
+			bgElem: (settings && settings.bgElem) || document.getElementById(el.replace('#', '')), // if first arg is a string, we take it as elem
 			speedDivider: (settings && settings.speedDivider) || speed,
 
 			_elemY: 0
@@ -48,7 +48,7 @@
 	 * Updates the background position.
 	 */
 	function updatePosition(options) {
-		var translateValue = lastScrollY / options.speedDivider;
+		var translateValue = lastScrollY / options.speedDivider
 
 		// We don't want parallax to happen if scrollpos is below 0
 		if (translateValue < 0)
@@ -64,13 +64,13 @@
 	// Translates an element on the Y axis using translate3d to ensure
 	// that the rendering is done by the GPU
 	function translateY(elem, value) {
-		var translate = 'translate3d(0,' + value + 'px, 0)';
-		elem.style.transform = translate;
-		elem.style['-webkit-transform'] = translate;
-		elem.style['-moz-transform'] = translate;
-		elem.style['-ms-transform'] = translate;
-		elem.style['-o-transform'] = translate;
-	};
+		var translate = 'translate3d(0,' + value + 'px, 0)'
+		elem.style.transform = translate
+		elem.style['-webkit-transform'] = translate
+		elem.style['-moz-transform'] = translate
+		elem.style['-ms-transform'] = translate
+		elem.style['-o-transform'] = translate
+	}
 
 	/** Holds the listeners. */
 	var listeners = []
@@ -91,11 +91,6 @@
 		}
 	}
 
-	/**
-	 * Usage: new Parallax(elem, speedDivider) || new Parallax({ bgElem: 'id', speedDivider: 2.1 })
-	 */
-	window.Asparagus = window.Parallax = Plugin
-
 	// Initialize on domready
 	(function () {
 		var loaded = 0
@@ -103,15 +98,20 @@
 			if (loaded) return
 			loaded = 1
 
-			window.addEventListener('scroll', doScroll, false);
-		};
+			window.addEventListener('scroll', doScroll, false)
+		}
 
 		if (!window.requestAnimationFrame) return console.error('Please include a polyfill for requestAnimationFrame.')
 
 		if (window.document.readyState === 'complete') {
-			window.requestIdleCallback(bootstrap) || setTimeout(bootstrap, 0)
+			(window.requestIdleCallback && window.requestIdleCallback(bootstrap)) || window.requestAnimationFrame(bootstrap) || setTimeout(bootstrap, 0)
 		} else {
 			window.addEventListener('load', bootstrap, false)
 		}
-	}());
+	}())
+
+	/**
+	 * Usage: new Parallax(elem, speedDivider) || new Parallax({ bgElem: 'id', speedDivider: 2.1 })
+	 */
+	window.Asparagus = window.Parallax = Plugin
 }(window));
