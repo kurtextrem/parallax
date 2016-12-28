@@ -2,12 +2,15 @@
 <html lang="en-us">
 <head>
   <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+
   <title>Asparagus demo</title>
-  <link rel="stylesheet" href="asparagus.css" />
+  <link rel="stylesheet" href="asparagus.css">
 </head>
 <body>
-  <div id="hero">
-    <div id="hero-bg"></div>
+  <div class="hero">
+    <div class="hero-bg" id="hero-bg"></div>
 
     <div class="hero-content">
       <h1>rAF + translate3d</h1>
@@ -24,6 +27,16 @@
 
   <h2>Ipsum awesome</h2>
 
+  <div class="hero">
+    <div class="hero-bg" id="hero-bg2"></div>
+
+    <div class="hero-content">
+      <h1>rAF + translate3d</h1>
+      <p>Written in native Javascript using a single ticking requestAnimationFrame() method and translate3d to ensure GPU acceleration.</p>
+    </div>
+
+  </div>
+
   <p>Maecenas auctor urna ut ante pulvinar lacinia ac sed leo. Aenean vehicula quis odio sit amet hendrerit. Curabitur fringilla augue eu tincidunt pellentesque. Integer eget nibh sit amet metus ullamcorper consequat. Quisque in pretium elit, vel ornare urna. Cras eu velit tortor. Suspendisse ut sollicitudin lectus. Morbi laoreet metus ut mauris placerat laoreet. Morbi nec eleifend dui.</p>
 
   <p>Aenean nec eros velit. Praesent hendrerit ligula eu purus rhoncus, vitae molestie elit porta. Aliquam nibh turpis, faucibus vitae mollis sit amet, auctor ut augue. Sed eu ultrices velit, a convallis dui. Ut fringilla nibh tortor. Aliquam erat volutpat. Etiam dignissim ullamcorper mollis. Etiam ultrices nunc eget risus tempus elementum. Praesent quis enim vestibulum, fringilla arcu eu, ornare massa. In luctus, dui non interdum semper, eros est hendrerit diam, sed fringilla massa arcu eget quam. Nunc pretium eros in malesuada pretium. Duis id interdum mi. Cras imperdiet, lectus ut ultrices imperdiet, nisl tellus lacinia sapien, ac hendrerit erat lorem a nisl. Donec faucibus orci a neque suscipit fermentum.</p>
@@ -32,13 +45,14 @@
 
   <h2>Dolor cool</h2>
 
-   <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed sagittis accumsan nunc, non interdum est pellentesque ut. Duis semper arcu vel eros congue lacinia non vitae sapien. Morbi porttitor est et est facilisis hendrerit. Phasellus accumsan nibh sit amet aliquam tincidunt. Vivamus dapibus neque eget orci sagittis fringilla. Phasellus dignissim elementum urna id porttitor. Nullam ultricies euismod turpis eget semper. Curabitur tincidunt porta urna a ultrices. Donec eu bibendum nisl. Vivamus sapien tellus, accumsan vitae enim eget, condimentum commodo nisl. Curabitur feugiat tristique lectus, sed sagittis enim scelerisque sit amet. Quisque luctus tellus arcu, eget venenatis mauris fermentum non. Duis eget magna at dolor laoreet vehicula nec a erat. Nullam pellentesque viverra elementum. Cras ac dictum arcu. Fusce ac aliquet tortor.</p>
+  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed sagittis accumsan nunc, non interdum est pellentesque ut. Duis semper arcu vel eros congue lacinia non vitae sapien. Morbi porttitor est et est facilisis hendrerit. Phasellus accumsan nibh sit amet aliquam tincidunt. Vivamus dapibus neque eget orci sagittis fringilla. Phasellus dignissim elementum urna id porttitor. Nullam ultricies euismod turpis eget semper. Curabitur tincidunt porta urna a ultrices. Donec eu bibendum nisl. Vivamus sapien tellus, accumsan vitae enim eget, condimentum commodo nisl. Curabitur feugiat tristique lectus, sed sagittis enim scelerisque sit amet. Quisque luctus tellus arcu, eget venenatis mauris fermentum non. Duis eget magna at dolor laoreet vehicula nec a erat. Nullam pellentesque viverra elementum. Cras ac dictum arcu. Fusce ac aliquet tortor.</p>
 
-   <p>Aenean nec eros velit. Praesent hendrerit ligula eu purus rhoncus, vitae molestie elit porta. Aliquam nibh turpis, faucibus vitae mollis sit amet, auctor ut augue. Sed eu ultrices velit, a convallis dui. Ut fringilla nibh tortor. Aliquam erat volutpat. Etiam dignissim ullamcorper mollis. Etiam ultrices nunc eget risus tempus elementum. Praesent quis enim vestibulum, fringilla arcu eu, ornare massa. In luctus, dui non interdum semper, eros est hendrerit diam, sed fringilla massa arcu eget quam. Nunc pretium eros in malesuada pretium. Duis id interdum mi. Cras imperdiet, lectus ut ultrices imperdiet, nisl tellus lacinia sapien, ac hendrerit erat lorem a nisl. Donec faucibus orci a neque suscipit fermentum.</p>
+  <p>Aenean nec eros velit. Praesent hendrerit ligula eu purus rhoncus, vitae molestie elit porta. Aliquam nibh turpis, faucibus vitae mollis sit amet, auctor ut augue. Sed eu ultrices velit, a convallis dui. Ut fringilla nibh tortor. Aliquam erat volutpat. Etiam dignissim ullamcorper mollis. Etiam ultrices nunc eget risus tempus elementum. Praesent quis enim vestibulum, fringilla arcu eu, ornare massa. In luctus, dui non interdum semper, eros est hendrerit diam, sed fringilla massa arcu eget quam. Nunc pretium eros in malesuada pretium. Duis id interdum mi. Cras imperdiet, lectus ut ultrices imperdiet, nisl tellus lacinia sapien, ac hendrerit erat lorem a nisl. Donec faucibus orci a neque suscipit fermentum.</p>
 
   <script src="asparagus.js"></script>
   <script>
     new Parallax()
+    new Parallax('hero-bg2')
   </script>
 </body>
 </html>

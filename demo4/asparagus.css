@@ -12,7 +12,7 @@ body {
     sans-serif;
 }
 
-#hero {
+.hero {
   position: relative;
   height: 750px;
 
@@ -20,7 +20,7 @@ body {
   contain: strict;
 }
 
-#hero-bg {
+.hero-bg {
   position: absolute;
   width: 100%;
   height: 750px;
