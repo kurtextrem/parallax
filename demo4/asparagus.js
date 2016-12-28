@@ -17,6 +17,7 @@
  		var options = {
 			bgElem: (settings && settings.bgElem) || document.getElementById(el.replace('#', '')), // if first arg is a string, we take it as elem
 			speedDivider: (settings && settings.speedDivider) || speed,
+			margin:  (settings && settings.margin) || 30,
 
 			_elemBounds: {
 				top: null,
@@ -50,6 +51,9 @@
 			options._elemBounds.bottom = options._elemBounds.top + parent.offsetHeight
 			options._elemBounds.left = parent.offsetLeft
 			options._elemBounds.right = options._elemBounds.left + parent.offsetWidth
+
+			if (options._elemBounds.top < options.margin)
+				options.margin = 0
 		}
 
 		tickId = window.requestAnimationFrame(cb)
@@ -60,7 +64,7 @@
 	 */
 	function updatePosition(options) {
 		var bounds = options._elemBounds,
-			translateValue = (lastScrollY - bounds.top) / options.speedDivider
+			translateValue = (lastScrollY - bounds.top + options.margin) / options.speedDivider
 
 		// Scenarios where we don't want parallax:
 		// elem not in viewport, because:
@@ -69,7 +73,8 @@
 		// it's above
 		// it's left
 		// it's righ
-		if (lastScrollY < bounds.top || lastScrollY > bounds.bottom || lastScrollX < bounds.left || lastScrollX > bounds.right || translateValue < 0)
+		console.log(translateValue)
+		if ((lastScrollY + options.margin) < bounds.top || lastScrollY > bounds.bottom || lastScrollX < bounds.left || lastScrollX > bounds.right || translateValue < 0)
 			return tickId = 0
 
 		translateY(options.bgElem, translateValue)
