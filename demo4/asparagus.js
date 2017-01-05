@@ -12,7 +12,9 @@
 		var el = typeof settings === 'string' ? settings : 'hero-bg',
 				speed = speedDivider ? +speedDivider : 1.5
 
-		if (~el.indexOf('.')) return console.error('Asparagus needs an ID or single element as bgElem.')
+		if (~el.indexOf('.')) {
+			return console.error('Asparagus needs an ID or single DOM node as bgElem.', el)  // we don't throw, as this would break other JS in a bundle
+		}
 
  		var options = {
 			bgElem: (settings && settings.bgElem) || document.getElementById(el.replace('#', '')), // if first arg is a string, we take it as elem
@@ -25,6 +27,10 @@
 				right: 0,
 				left: 0
 			},
+		}
+
+		if (!(options.bgElem instanceof Node)) {
+			return console.error('bgElem is not an instance of Node.', options) // we don't throw, as this would break other JS in a bundle
 		}
 
 		/** Prevents creation of a new bound function every tick. */
@@ -73,7 +79,6 @@
 		// it's above
 		// it's left
 		// it's righ
-		console.log(translateValue)
 		if ((lastScrollY + options.margin) < bounds.top || lastScrollY > bounds.bottom || lastScrollX < bounds.left || lastScrollX > bounds.right || translateValue < 0)
 			return tickId = 0
 
