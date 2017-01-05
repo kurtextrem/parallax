@@ -23,7 +23,7 @@
 		 * speedDivider {int}		Speed of the animation
 		 * margin 		{int}	Extends the top boundary of the bgElem to earlier/later start the animation
 		 */
- 		var options = {
+ 		var options = this.options = {
 			bgElem: (settings && settings.bgElem) || document.getElementById(el.replace('#', '')), // if first arg is a string, we take it as elem
 			speedDivider: (settings && settings.speedDivider) || speed,
 			margin:  (settings && settings.margin) || 30,
